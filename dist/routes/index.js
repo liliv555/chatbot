@@ -34,22 +34,26 @@ const router = (0, express_1.Router)();
 router.post('/startchatbot', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const payload = req.body;
-        const result = yield controller.startChatbot(payload.phoneNumber);
-        return res.status(200).send(result);
+        const response = yield controller.startChatbot(payload.phoneNumber);
+        return res.status(200).send(response);
     }
     catch (error) {
-        res.status(error.status).json({ error: { code: error.code, message: error.message } });
+        console.log("ERROR: ", error);
+        return res.status(error.status).json({ error: { code: error.code, message: error.message } });
     }
+    ;
 }));
 router.post('/receivemessage', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const payload = req.body;
-        const result = yield controller.receiveMessage(payload.phoneNumber, payload.answerText);
-        return res.status(200).send(result);
+        const response = yield controller.receiveMessage(payload.phoneNumber, payload.answerText);
+        return res.status(200).send(response);
     }
     catch (error) {
-        res.status(error.status).json({ error: { code: error.code, message: error.message } });
+        console.log("ERROR: ", error);
+        return res.status(error.status).json({ error: { code: error.code, message: error.message } });
     }
+    ;
 }));
 exports.default = router;
 //# sourceMappingURL=index.js.map

@@ -1,4 +1,4 @@
-import { DataTypes, Model, Optional } from 'sequelize'
+import { DataTypes, Model, Optional } from 'sequelize';
 import sequelizeConnection from '../../config/config';
 
 interface UserAttributes {
@@ -7,28 +7,29 @@ interface UserAttributes {
   currentInteractionId: string;
   createdAt?: Date;
   updatedAt?: Date;
-}
-export interface UserCreationAttributes extends Optional<UserAttributes, 'phoneNumber'> {}
+};
+
+export interface UserCreationAttributes extends Optional<UserAttributes, 'phoneNumber'> {};
 // export interface UserOuput extends Required<UserAttributes> {}
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-    public phoneNumber!: string
-    public currentQuestionSequence: number
-    public currentInteractionId: string
+    public phoneNumber!: string;
+    public currentQuestionSequence: number;
+    public currentInteractionId: string;
   
     // timestamps
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
-}
+};
   
 User.init({
   phoneNumber: {
     type: DataTypes.STRING,
-    primaryKey: true,
+    primaryKey: true
   },
   currentQuestionSequence: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: true
   },
   currentInteractionId: {
     type: DataTypes.UUID,
@@ -40,6 +41,6 @@ User.init({
   timestamps: true,
   sequelize: sequelizeConnection,
   modelName: 'User'
-})
+});
   
-export default User
+export default User;

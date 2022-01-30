@@ -12,8 +12,12 @@ var Types;
     Types["Date"] = "date";
     Types["Option"] = "option";
 })(Types = exports.Types || (exports.Types = {}));
+;
+;
+;
 class Question extends sequelize_1.Model {
 }
+;
 Question.init({
     questionId: {
         type: sequelize_1.DataTypes.INTEGER,

@@ -16,7 +16,8 @@ const dbInit = () => {
         config_1.default.sync({ force: false });
     }
     catch (error) {
-        throw new Error;
+        console.log("ERROR: ", error);
+        throw error;
     }
 };
 exports.default = dbInit;

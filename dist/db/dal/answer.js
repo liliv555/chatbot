@@ -25,8 +25,9 @@ const create = (phoneNumber, questionId, interactionId, answerText) => __awaiter
         return answer;
     }
     catch (error) {
-        console.log(error);
+        throw new Error('Could not create answer.');
     }
+    ;
 });
 exports.create = create;
 //# sourceMappingURL=answer.js.map

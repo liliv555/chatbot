@@ -19,11 +19,13 @@ const getBySequence = (sequence) => __awaiter(void 0, void 0, void 0, function* 
     if (!question) {
         throw new Error('Could not find question with this sequence.');
     }
+    ;
     return question;
 });
 exports.getBySequence = getBySequence;
 const isLastQuestion = (question) => __awaiter(void 0, void 0, void 0, function* () {
-    return ((yield Question_1.default.count()) == question.sequence);
+    const totalQuestions = yield Question_1.default.count();
+    return (totalQuestions == question.sequence);
 });
 exports.isLastQuestion = isLastQuestion;
 //# sourceMappingURL=question.js.map

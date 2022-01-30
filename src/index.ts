@@ -3,17 +3,17 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import router from './routes';
 
-import dbInit from './db/init'
+import dbInit from './db/init';
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const port = 5000
+const port: number = 5000;
 
-dbInit()
+dbInit();
 
-app.listen(port, () => console.log(`Running on port ${port}`))
+app.listen(port, () => console.log(`Running on port ${port}`));
 
-app.use(router)
+app.use(router);

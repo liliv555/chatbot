@@ -13,7 +13,8 @@ const dbInit = () => {
   try {
     sequelizeConnection.sync({ force: false });
   } catch (error) {
-    throw new Error;
+    console.log("ERROR: ", error);
+    throw error;
   }
 }
 

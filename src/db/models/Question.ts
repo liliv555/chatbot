@@ -1,26 +1,27 @@
-import { DataTypes, Model, Optional } from 'sequelize'
-import sequelizeConnection from '../../config/config'
+import { DataTypes, Model, Optional } from 'sequelize';
+import sequelizeConnection from '../../config/config';
 
 export enum Types {
     Text = 'text',
     Date = 'date',
     Option = 'option'
-}
+};
 
 interface QuestionAttributes {
   questionId: number;
   sequence: number;
   questionText: string;
   questionType: Types
-}
-export interface QuestionCreationAttributes extends Optional<QuestionAttributes, 'questionId'> {}
+};
+
+export interface QuestionCreationAttributes extends Optional<QuestionAttributes, 'questionId'> {};
 
 class Question extends Model<QuestionAttributes, QuestionCreationAttributes> implements QuestionAttributes {
     public questionId!: number
     public sequence!: number
     public questionText!: string
     public questionType!: Types
-}
+};
   
 Question.init({
     questionId: {
@@ -44,6 +45,6 @@ Question.init({
     timestamps: false,
     sequelize: sequelizeConnection,
     modelName: 'Question'
-})
+});
   
-export default Question
+export default Question;

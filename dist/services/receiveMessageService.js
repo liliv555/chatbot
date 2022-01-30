@@ -34,7 +34,7 @@ const userDal = __importStar(require("../db/dal/user"));
 const answerDal = __importStar(require("../db/dal/answer"));
 const questionDal = __importStar(require("../db/dal/question"));
 const chatbotService_1 = require("./chatbotService");
-const getByPhoneNumber = (phoneNumber) => {
+const getUserByPhoneNumber = (phoneNumber) => {
     return userDal.getByPhoneNumber(phoneNumber);
 };
 const receiveMessage = (phoneNumber, answerText) => __awaiter(void 0, void 0, void 0, function* () {
@@ -42,18 +42,21 @@ const receiveMessage = (phoneNumber, answerText) => __awaiter(void 0, void 0, vo
     // replies with the next question if the answer was valid, or lets the user know how to
     // give a valid answer.
     try {
-        const currentUser = yield getByPhoneNumber(phoneNumber);
-        const question = yield (0, chatbotService_1.getBySequence)(currentUser.currentQuestionSequence);
+        const currentUser = yield getUserByPhoneNumber(phoneNumber);
+        if (currentUser.currentQuestionSequence == null)
+            return "";
+        const question = yield (0, chatbotService_1.getQuestionBySequence)(currentUser.currentQuestionSequence);
         const currentQuestionType = question.questionType;
-        return validateQuestion(currentQuestionType, answerText, currentUser, question);
+        return validateQuestion(answerText, currentUser, question);
     }
     catch (error) {
-        console.log(error);
+        throw ({ status: 500, code: 'RECEIVE_MESSAGE_ERROR', message: error.message });
     }
+    ;
 });
 exports.receiveMessage = receiveMessage;
-const validateQuestion = (currentQuestionType, answerText, currentUser, question) => __awaiter(void 0, void 0, void 0, function* () {
-    switch (currentQuestionType) {
+const validateQuestion = (answerText, currentUser, question) => __awaiter(void 0, void 0, void 0, function* () {
+    switch (question.questionType) {
         case Question_1.Types.Text:
             if (answerText.length > 0) {
                 return (yield validAnswer(currentUser, question, answerText));
@@ -72,9 +75,10 @@ const validateQuestion = (currentQuestionType, answerText, currentUser, question
                 const message = "Please specify the date in YYYY-MM-DD format.";
                 return invalidAnswer(question, message);
             }
+            ;
         case Question_1.Types.Option:
-            // for simplicity, I assume there are only 3 options.
-            // Otherwise we would need an extra column in the Question table: numberOfOptions
+            // For simplicity, I assume there are only 3 options.
+            // Otherwise we would need an extra column in the Question table: numberOfOptions.
             if ((answerText == 'A') || (answerText == 'B') || (answerText == 'C')) {
                 return (yield validAnswer(currentUser, question, answerText));
             }
@@ -82,25 +86,36 @@ const validateQuestion = (currentQuestionType, answerText, currentUser, question
                 const message = "Please reply A, B or C depending on which option you would like to choose.";
                 return invalidAnswer(question, message);
             }
+            ;
         default:
             throw ({ status: 500, code: 'QUESTION_TYPE_NOT_VALID', message: 'Question type is not valid.' });
     }
+    ;
 });
 const validAnswer = (currentUser, currentQuestion, answerText) => __awaiter(void 0, void 0, void 0, function* () {
-    // if the answer is valid move on to the next question, save the answer in the database
+    // If the answer is valid move on to the next question, save the answer in the database
     // and reply with the next question
+    // const t = await sequelize.transaction();
     try {
-        currentUser.currentQuestionSequence++;
-        yield currentUser.save();
-        const question = yield (0, chatbotService_1.getBySequence)(currentUser.currentQuestionSequence);
         answerDal.create(currentUser.phoneNumber, currentQuestion.questionId, currentUser.currentInteractionId, answerText);
-        if (yield questionDal.isLastQuestion(currentQuestion))
-            return;
-        return question.questionText;
+        let nextQuestion = "";
+        if (yield questionDal.isLastQuestion(currentQuestion)) {
+            currentUser.currentQuestionSequence = null;
+            yield currentUser.save();
+        }
+        else {
+            currentUser.currentQuestionSequence++;
+            const question = yield (0, chatbotService_1.getQuestionBySequence)(currentUser.currentQuestionSequence);
+            yield currentUser.save();
+            nextQuestion = question.questionText;
+        }
+        return nextQuestion;
     }
     catch (error) {
-        console.log(error);
+        console.log("ERROR: ", error);
+        throw error;
     }
+    ;
 });
 const invalidAnswer = (currentQuestion, message) => {
     // if the answer is not what's expected reply with a preconfigured message
@@ -110,7 +125,9 @@ const invalidAnswer = (currentQuestion, message) => {
         return currentQuestion.questionText;
     }
     catch (error) {
-        console.log(error);
+        console.log("ERROR: ", error);
+        throw error;
     }
+    ;
 };
 //# sourceMappingURL=receiveMessageService.js.map

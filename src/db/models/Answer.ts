@@ -9,18 +9,18 @@ interface AnswerAttributes {
   createdAt?: Date;
   updatedAt?: Date;
 }
-export interface AnswerCreationAttributes extends Optional<AnswerAttributes, 'phoneNumber' | 'questionId' | 'interactionId'> {}
+export interface AnswerCreationAttributes extends Optional<AnswerAttributes, 'phoneNumber' | 'questionId' | 'interactionId'> {};
 
 class Answer extends Model<AnswerAttributes, AnswerCreationAttributes> implements AnswerAttributes {
-    public phoneNumber!: string
-    public questionId!: number
-    public interactionId!: string
-    public answerText!: string
+    public phoneNumber!: string;
+    public questionId!: number;
+    public interactionId!: string;
+    public answerText!: string;
   
     // timestamps
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
-}
+};
   
 Answer.init({
     phoneNumber: {
@@ -43,6 +43,6 @@ Answer.init({
     timestamps: true,
     sequelize: sequelizeConnection,
     modelName: 'Answer'
-})
+});
 
-export default Answer
+export default Answer;

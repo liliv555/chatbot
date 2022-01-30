@@ -18,30 +18,41 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.receiveMessage = exports.startChatbot = void 0;
 const chatbotService = __importStar(require("../services/chatbotService"));
 const receiveMessageService = __importStar(require("../services/receiveMessageService"));
-const startChatbot = (phoneNumber) => {
+const startChatbot = (phoneNumber) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const question = chatbotService.startChatbot(phoneNumber);
+        const question = yield chatbotService.startChatbot(phoneNumber);
         return question;
     }
     catch (error) {
-        return error;
+        console.log("ERROR: ", error);
+        throw error;
     }
     ;
-};
+});
 exports.startChatbot = startChatbot;
-const receiveMessage = (phoneNumber, answerText) => {
+const receiveMessage = (phoneNumber, answerText) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // call service for validate answer and return next question if it's valid, but the same if invalid with message
-        const question = receiveMessageService.receiveMessage(phoneNumber, answerText);
+        const question = yield receiveMessageService.receiveMessage(phoneNumber, answerText);
         return question;
     }
     catch (error) {
-        return error;
+        console.log("ERROR: ", error);
+        throw error;
     }
-};
+    ;
+});
 exports.receiveMessage = receiveMessage;
 //# sourceMappingURL=index.js.map

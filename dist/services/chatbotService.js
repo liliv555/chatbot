@@ -28,17 +28,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.startChatbot = exports.getBySequence = void 0;
+exports.startChatbot = exports.getQuestionBySequence = void 0;
 const userDal = __importStar(require("../db/dal/user"));
 const questionDal = __importStar(require("../db/dal/question"));
 const uuid_1 = require("uuid");
-const findOrCreate = (phoneNumber) => {
+const findOrCreateUser = (phoneNumber) => {
     return userDal.findOrCreate(phoneNumber);
 };
-const getBySequence = (sequence) => {
+const getQuestionBySequence = (sequence) => {
     return questionDal.getBySequence(sequence);
 };
-exports.getBySequence = getBySequence;
+exports.getQuestionBySequence = getQuestionBySequence;
 const phoneValidation = (phoneNumber) => {
     // validation for spanish phone numbers
     const phoneRegex = new RegExp('^\\+34(?:6[0-9]|7[1-9])[0-9]{7}$');
@@ -46,17 +46,24 @@ const phoneValidation = (phoneNumber) => {
 };
 const startChatbot = (phoneNumber) => __awaiter(void 0, void 0, void 0, function* () {
     // if phone number is not valid throws an error with 500 status
-    if (!phoneValidation(phoneNumber)) {
-        throw ({ status: 500, code: 'PHONE_NUMBER_NOT_VALID', message: 'Phone number is not valid.' });
+    try {
+        if (!phoneValidation(phoneNumber)) {
+            throw ({ status: 500, code: 'PHONE_NUMBER_NOT_VALID', message: 'Phone number is not valid.' });
+        }
+        ;
+        //  finds or creates the user, sets the current question sequence to 1 and generates a new interaction id
+        const currentUser = yield findOrCreateUser(phoneNumber);
+        currentUser.currentQuestionSequence = 1;
+        currentUser.currentInteractionId = (0, uuid_1.v4)();
+        yield currentUser.save();
+        // query for the first question
+        const questionText = (yield (0, exports.getQuestionBySequence)(currentUser.currentQuestionSequence)).questionText;
+        return questionText;
     }
-    //  finds or creates the user, sets the current question sequence to 1 and generates a new interaction id
-    const currentUser = yield findOrCreate(phoneNumber);
-    currentUser.currentQuestionSequence = 1;
-    currentUser.currentInteractionId = (0, uuid_1.v4)();
-    yield currentUser.save();
-    // query for the first question
-    const questionText = (yield (0, exports.getBySequence)(currentUser.currentQuestionSequence)).questionText;
-    return questionText;
+    catch (error) {
+        console.log("ERROR: ", error);
+        throw error;
+    }
 });
 exports.startChatbot = startChatbot;
 //# sourceMappingURL=chatbotService.js.map

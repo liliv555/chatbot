@@ -1,4 +1,4 @@
-import Answer from '../models/Answer'
+import Answer from '../models/Answer';
 
 export const create = async (phoneNumber: string, questionId: number, interactionId: string, answerText: string): Promise<Answer> => {
   try {
@@ -10,6 +10,6 @@ export const create = async (phoneNumber: string, questionId: number, interactio
     });
     return answer;
   } catch (error) {
-    console.log(error)
-  }
-}
+    throw new Error('Could not create answer.');
+  };
+};

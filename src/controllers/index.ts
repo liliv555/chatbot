@@ -1,21 +1,22 @@
-import * as chatbotService from '../services/chatbotService'
-import * as receiveMessageService from '../services/receiveMessageService'
+import * as chatbotService from '../services/chatbotService';
+import * as receiveMessageService from '../services/receiveMessageService';
 
-export const startChatbot = (phoneNumber: string) => {
+export const startChatbot = async (phoneNumber: string) => {
     try {
-        const question = chatbotService.startChatbot(phoneNumber);
+        const question: string = await chatbotService.startChatbot(phoneNumber);
         return question;
     } catch (error) {
-        return error;
+        console.log("ERROR: ", error);
+        throw error;
     };
-}
+};
 
-export const receiveMessage = (phoneNumber: string, answerText: string) => {
+export const receiveMessage = async (phoneNumber: string, answerText: string) => {
     try {
-        // call service for validate answer and return next question if it's valid, but the same if invalid with message
-        const question = receiveMessageService.receiveMessage(phoneNumber, answerText);
+        const question: string = await receiveMessageService.receiveMessage(phoneNumber, answerText);
         return question;
     } catch (error) {
-      return error;
-    }
-}
+        console.log("ERROR: ", error);
+        throw error;
+    };
+};
